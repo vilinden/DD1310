@@ -1,0 +1,9 @@
+1. I den andra varianten matas värdet in direkt i listan istället för att temporärt sparas i en variabel som sedan sparas i listan.
+    Detta kan påverka programmet då variabeln poang kan användas igen, men det gör också programmet minimalt mer krävande. Jag föredrar den senare varianten.
+
+2.
+    Vi får ett felmeddelande som antyder att variabeln "bokstav" saknas. Detta då vi försöker att addera värdet av det obefintliga variabeln "bokstav" till "rövarspråk".
+
+3. Vad händer om användaren matar in en hel mening, vad hade hänt om programmet ändrade allt 
+som inte var vokaler istället för att omvandla enbart konsonanter? 
+    Mellanrummen är kvar där de bör vara. Om programmet hade ändrat allt som inte är vokaler hade även mellanslagen blivit översatta då detta inte är en vokal, resulterat i " o ".

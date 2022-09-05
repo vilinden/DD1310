@@ -1,0 +1,30 @@
+1. Vad innebär regel 2 i Hederskodex?
+    Att allt som gjorts i examinationen ska redovisas ärligt. D.v.s. att all hjälp och alla källor ska visas.
+
+2. Vilket ansvar har läraren i utformandet av Kurs och examination?
+    Att uppgifter inte ska ge onödiga incitament till fusk, de ska inte heller vara orimliga kommplade till elevernas kunskaper.
+
+3. Fundera över pedagogiska skäl till att inte fråga handledarna om hjälp direkt.
+    Man lär sig mycket av att fundera själv och komma fram till egna lösningar. 
+    Dessutom kommer inte läraren att finnas där restan av livet och det är därför viktigt att eleven kan hantera sina egna problem.
+
+4. Vad händer när vi stänger ner Firefox.
+    Firefox stängs ner och terminalfönstret är inte längre upptagen med den processen.
+
+5. Vad händer när vi kör programmet med kommentartecken?
+    Raden exekveras ej.
+
+6. 
+    Plus tecknet slår samman strängarna "Hej " och värdet på namn
+    
+7.
+    Det är inte fnuttar runt namn då detta är en variabel och vi vill ha dess värde.
+
+8.
+    Nej.
+
+9. Vilka olika beteenden har programmet och vad avgör vilket beteende som sker under en körning? 
+    Beroende på inmatningen skrivs olika texter ut i terminalfönstret.
+
+10. Programmet fortsätter att fråga användaren om hur kul det ska bli tills programmet stängs ned.
+

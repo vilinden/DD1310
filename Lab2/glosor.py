@@ -1,8 +1,6 @@
 #2022-08-31
 #Viktor Lindén, Erik Stare
 
-from unittest import result
-
 # Etablerar listor för glosorna. Ord med samma index är översättningar på varandra.
 svenska = ["Bord", "Dator", "Bil", "Blomma", "Flagga", "Svår"]
 engelska = ["Table", "Computer", "Car", "Flower", "Flag", "Hard"]

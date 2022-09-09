@@ -3,3 +3,6 @@
 
 2. Vilken typ av fel genereras om användaren svarar med “tre”? 
     ValueError, då den inte kan jämföra en sträng med ett heltal.
+
+3. Vilka missar bör vi upptäcka genom att lägga all “fri” kod i main? 
+    Genom att lägga all fri kod i main bör vi upptäcka om några variabler är globala.

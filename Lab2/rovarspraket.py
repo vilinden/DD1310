@@ -1,4 +1,4 @@
-# Rovarspråk av Viktor Lindén   
+# Rovarspråk av Viktor Lindén, Erik Stare
 # Skrivet den 2022-09-05
 konsonanter="bcdfghjklmnpqrstvwxz" 
 print("Hej välkommen till rövarspråksöversättaren") 

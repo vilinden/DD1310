@@ -1,15 +1,18 @@
 # 2022-09-09
-#Viktor Lindén, Erik Stare
+# Viktor Lindén, Erik Stare
 
 # Etablerar listor för glosorna. Ord med samma index är översättningar på varandra.
 svenska = ["Bord", "Dator", "Bil", "Blomma", "Flagga", "Svår"]
 engelska = ["Table", "Computer", "Car", "Flower", "Flag", "Hard"]
 
 # Presenterar programmet för användaren. Skriver ut vad som förväntas av användaren. \n används för att göra programmet mer estetiskt snyggt.
-print("Detta är ett glosförhör. Skriv rätt översättning till engelska utifrån det svenska ord som presenteras.\n")
+def presentaion():
+    print("Detta är ett glosförhör. Skriv rätt översättning till engelska utifrån det svenska ord som presenteras.\n")
 
 # Etablerar variabel för att hålla koll på antalet rätta översättningar.
 resultat = 0
+
+presentaion()
 
 # Loopar igenom varje index för den svenska listan
 for i in range(len(svenska)):

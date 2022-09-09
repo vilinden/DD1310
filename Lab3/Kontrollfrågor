@@ -1,0 +1,5 @@
+1. Vad har Marko för regel för namngivning av funktioner?
+    De ska vara döpta efter vad de gör, för att underlätta förståelse.
+
+2. Vilken typ av fel genereras om användaren svarar med “tre”? 
+    ValueError, då den inte kan jämföra en sträng med ett heltal.

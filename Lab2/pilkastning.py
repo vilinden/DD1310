@@ -1,5 +1,5 @@
 #2022-09-01
-#Viktor Lindén
+#Viktor Lindén, Erik Stare
 namn1=input("Vad heter kastare 1") 
 namn2=input("Vad heter kastare 2") 
 poang1=[] 

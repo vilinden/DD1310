@@ -1,7 +1,10 @@
-# 2022-09-09
+# 2022-09-21
 # Viktor Lindén, Erik Stare
 
 # Presenterar programmet för användaren. Skriver ut vad som förväntas av användaren. \n används för att göra programmet mer estetiskt snyggt.
+from turtle import right
+
+
 def presentaion():
     print("Detta är ett glosförhör. Skriv rätt översättning till engelska utifrån det svenska ord som presenteras.\n")
 
@@ -17,15 +20,31 @@ def översättEttOrd(svenska, engelska, försök = 1):
         print("Det var tyvärr fel, försök igen!")
     return 0
 
+# Läser given textfil
+def läsTextfilTillLista(filväg):
+    try:
+        svenska = []
+        engelska = []
+        svårighet = []
+        fil = open(filväg, "r")
+        lista = fil.readlines()
+        for i in range(len(lista)):
+            lista[i] = lista[i].replace("\n", "")
+            glosa = lista[i].split(":")
+            svenska.append(glosa[0])
+            engelska.append(glosa[1])
+            svårighet.append(int(glosa[2]))
+        fil.close()
+        return svenska, engelska, svårighet
+    except:
+        return []
+
 # Loopar igenom alla ord och skickar tillbaka resultatet på glosförhöret
 def glosförhör():
-    # Etablerar listor för glosorna, samt dess svåriget (antal försök). Ord med samma index är översättningar på varandra.
-    svenska = ["Bord", "Dator", "Bil", "Blomma", "Flagga", "Svår"]
-    engelska = ["Table", "Computer", "Car", "Flower", "Flag", "Hard"]
-    svårighet = [1, 1, 1, 1, 1, 3]
-
     # Etablerar variabel för att hålla koll på antalet rätta översättningar.
     resultat = 0
+
+    svenska, engelska, svårighet = läsTextfilTillLista("glosor.txt")
 
     # Loopar igenom varje index för den svenska listan
     for i in range(len(svenska)):
@@ -37,16 +56,16 @@ def glosförhör():
             
         resultat += resultatTemp
 
-    return resultat
+    return resultat, len(svenska) - resultat
 
 # Kör programmet
 def main():    
     presentaion()
 
-    resultat = glosförhör()
+    rätt, fel = glosförhör()
 
     # Resultatet presenteras för användaren med antalet rätta samt felaktiga svar.
-    print("\nDu hade {} rätt och {} fel".format(resultat, 6 - resultat))
+    print("\nDu hade {} rätt och {} fel".format(rätt, fel))
 
 
 main()

@@ -1,0 +1,8 @@
+1.
+  Skillnaden på utskrifterna är följande.
+  a. readlines skriver ut det som en lista av alla rader.
+  b. readline skriver ut varje rad i taget som en sträng.
+  c. read skriver ut hela texten som en lång sträng.
+
+2.
+  Det betyder att samtliga inbördes jämförningar är korrekta vilket betyder att hela listan är korrekt.

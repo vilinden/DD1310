@@ -18,7 +18,12 @@ def översättEttOrd(svenska, engelska, försök = 1):
     return 0
 
 # Loopar igenom alla ord och skickar tillbaka resultatet på glosförhöret
-def glosförhör(svenska, engelska, svårighet):
+def glosförhör():
+    # Etablerar listor för glosorna, samt dess svåriget (antal försök). Ord med samma index är översättningar på varandra.
+    svenska = ["Bord", "Dator", "Bil", "Blomma", "Flagga", "Svår"]
+    engelska = ["Table", "Computer", "Car", "Flower", "Flag", "Hard"]
+    svårighet = [1, 1, 1, 1, 1, 3]
+
     # Etablerar variabel för att hålla koll på antalet rätta översättningar.
     resultat = 0
 
@@ -35,18 +40,13 @@ def glosförhör(svenska, engelska, svårighet):
     return resultat
 
 # Kör programmet
-def main():
-    # Etablerar listor för glosorna, samt dess svåriget (antal försök). Ord med samma index är översättningar på varandra.
-    svenska = ["Bord", "Dator", "Bil", "Blomma", "Flagga", "Svår"]
-    engelska = ["Table", "Computer", "Car", "Flower", "Flag", "Hard"]
-    svårighet = [1, 1, 1, 1, 1, 3]
-    
+def main():    
     presentaion()
 
-    resultat = glosförhör(svenska, engelska, svårighet)
+    resultat = glosförhör()
 
     # Resultatet presenteras för användaren med antalet rätta samt felaktiga svar.
-    print("\nDu hade {} rätt och {} fel".format(resultat, len(svenska)-resultat))
+    print("\nDu hade {} rätt och {} fel".format(resultat, 6))
 
 
 main()

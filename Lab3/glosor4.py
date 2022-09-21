@@ -5,6 +5,7 @@
 def presentaion():
     print("Detta är ett glosförhör. Skriv rätt översättning till engelska utifrån det svenska ord som presenteras.\n")
 
+# Ber användaren översätta det svenska ordet till engelska, antalet försök går att välja med parameter 3. Returnerar rätt eller fel.
 def översättEttOrd(svenska, engelska, försök = 1):
     inmatning = input("Vad är {} på engelska? ".format(svenska))
     if inmatning.lower() == engelska.lower():
@@ -16,6 +17,7 @@ def översättEttOrd(svenska, engelska, försök = 1):
         print("Det var tyvärr fel, försök igen!")
     return 0
 
+# Loopar igenom alla ord och skickar tillbaka resultatet på glosförhöret
 def glosförhör(svenska, engelska, svårighet):
     # Etablerar variabel för att hålla koll på antalet rätta översättningar.
     resultat = 0
@@ -32,6 +34,7 @@ def glosförhör(svenska, engelska, svårighet):
 
     return resultat
 
+# Kör programmet
 def main():
     # Etablerar listor för glosorna, samt dess svåriget (antal försök). Ord med samma index är översättningar på varandra.
     svenska = ["Bord", "Dator", "Bil", "Blomma", "Flagga", "Svår"]

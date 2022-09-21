@@ -5,6 +5,7 @@
 def presentaion():
     print("Detta är ett glosförhör. Skriv rätt översättning till engelska utifrån det svenska ord som presenteras.\n")
 
+# Ber användaren översätta det svenska ordet till engelska, antalet försök går att välja med parameter 3. Returnerar rätt eller fel.
 def översättEttOrd(svenska, engelska, försök = 0):
     inmatning = input("Vad är {} på engelska? ".format(svenska))
     if inmatning.lower() == engelska.lower():

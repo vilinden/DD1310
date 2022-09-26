@@ -1,0 +1,6 @@
+Bord:Table
+Dator:Computer
+Bil:Car
+Blomma:Flower
+Flagga:Flag
+Svår:Hard

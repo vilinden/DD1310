@@ -1,14 +1,13 @@
 # 2022-09-21
 # Viktor Lindén, Erik Stare
 
-# Presenterar programmet för användaren. Skriver ut vad som förväntas av användaren. \n används för att göra programmet mer estetiskt snyggt.
-from turtle import right
-
-
+# Presenterar programmet för användaren. Skriver ut vad som förväntas av användaren.
+# \n används för att göra programmet mer estetiskt snyggt.
 def presentaion():
     print("Detta är ett glosförhör. Skriv rätt översättning till engelska utifrån det svenska ord som presenteras.\n")
 
-# Ber användaren översätta det svenska ordet till engelska, antalet försök går att välja med parameter 3. Returnerar rätt eller fel.
+# Ber användaren översätta det svenska ordet till engelska, antalet försök går att välja med parameter 3.
+# Returnerar rätt eller fel (1 eller 0).
 def översättEttOrd(svenska, engelska, försök = 1):
     inmatning = input("Vad är {} på engelska? ".format(svenska))
     if inmatning.lower() == engelska.lower():

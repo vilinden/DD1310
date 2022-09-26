@@ -1,8 +1,9 @@
-1.
+1. Om ni inte redigerar de inlästa strängarna kommer utskrifterna av filen se olika ut beroende på 
+vilken metod filen lästes med. Vad är skillnaden? (Kan ni komma på orsaken?)
   Skillnaden på utskrifterna är följande.
   a. readlines skriver ut det som en lista av alla rader.
   b. readline skriver ut varje rad i taget som en sträng.
   c. read skriver ut hela texten som en lång sträng.
 
-2.
+2. Varför är listan sorterad när vi inte bytt plats på några element under ett varv? 
   Det betyder att samtliga inbördes jämförningar är korrekta vilket betyder att hela listan är korrekt.

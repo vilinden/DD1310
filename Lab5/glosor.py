@@ -1,7 +1,7 @@
 # 2022-09-21
 # Viktor Lindén, Erik Stare
 
-import glosa
+from glosa import Glosa
 
 # Presenterar programmet för användaren. Skriver ut vad som förväntas av användaren. 
 # Används för att göra programmet mer estetiskt snyggt.
@@ -32,14 +32,15 @@ def läsTextfilTillLista(filväg):
             engelska.append(glosa[1])
         fil.close()
         return svenska, engelska
-    except:
+    except Exception as err:
+        print("ERROR: " + err)
         return []
 
 # Tar emot listor med glosor och gör till glosobjekt.add()
 def listaTillGlosa(svenska, engelska):
     glosObj = []
     for i in range(len(svenska)):
-        glosObj.append(glosa(svenska[i], engelska[i]))
+        glosObj.append(Glosa(svenska[i], engelska[i]))
     return glosObj
 
 # Loopar igenom alla ord och skickar tillbaka resultatet på glosförhöret

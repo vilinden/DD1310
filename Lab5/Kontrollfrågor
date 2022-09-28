@@ -1,2 +1,5 @@
 1. Ja
 2. Se ./KursMinnesbild.png
+3. Är de döpta till språk1 och språk2 kommer glosklassen vara mer generaliserad och
+   därmed användbar till andra glosor som inte bara är svenska-engelska. Är de döpta till
+   svenska och engelska är det dock lättare att veta vilket attribut som är vilket språk.

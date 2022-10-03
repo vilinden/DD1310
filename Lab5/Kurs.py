@@ -1,3 +1,6 @@
+# Viktor Lindén, Erik Stare
+# 2022-10-03
+
 # Klass för kurs
 class Kurs:
     # Funktion som initierar kursobjekt

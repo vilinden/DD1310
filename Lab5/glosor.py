@@ -1,4 +1,4 @@
-# 2022-09-21
+# 2022-10-03
 # Viktor Lindén, Erik Stare
 
 from glosa import Glosa

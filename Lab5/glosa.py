@@ -1,3 +1,6 @@
+# Viktor Lindén
+# 2022-10-03
+
 # Klass för glosor
 class Glosa:
     #Funktion som initierar glosobjekt

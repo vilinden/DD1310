@@ -60,7 +60,7 @@ def läsTextfilTillGlosor(filväg):
 def glosförhör():
     # Etablerar variabel för att hålla koll på antalet rätta översättningar.
     resultat = 0
-    filväg = "glosor.txt"
+    filväg = "./glosor.txt"
 
     glosor = läsTextfilTillGlosor(filväg)
 

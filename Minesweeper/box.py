@@ -6,9 +6,11 @@ class Box:
         self.__open = False
 
     def __str__(self):
-        if self.__mine:
-            return "X"
-        else: return "O"
+        if self.__open:
+            if self.__mine:
+                return "X"
+            else: return "0"
+        else: return ""
 
     def setMine(self):
         self.__mine = True

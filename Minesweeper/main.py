@@ -1,6 +1,7 @@
-from typing import List
 from box import Box
 import random
+from tkinter import *
+from tkinter import ttk
 
 # Huvudfunktion för att köra programmet
 def main():
@@ -20,6 +21,8 @@ def main():
 
     draw(board)
 
+
+
 # Definierar initialvärden för brädesstorlek och antalet minor
 def defInitials():
     while True:
@@ -32,13 +35,31 @@ def defInitials():
             break
         except:
             print("---\nEnter a valid input\n---")
-
     return [x,y], mineCount
 
+# Ritar brädet på skärmen
 def draw(board: list):
+    """
     for y in range(len(board)):
         for x in range(len(board[0])):
             print(board[x][y], end="")
         print()
+    """
+    window = Tk()
+    frm = ttk.Frame(window, padding=10)
+    frm.grid()
+    for y in range(len(board)):
+        for x in range(len(board[0])):
+            box = ttk.Button(frm, text=board[x][y], command=lambda : board[x][y].open())
+            box.grid(column=x, row=y)
+            """frame = ttk.Frame(frm, text=board[x][y], width=50, height=50)
+            frame.grid(column=x, row=y)
+            frame.grid_propagate(False) #disables resizing of frame
+            frame.columnconfigure(0, weight=1) #enables button to fill frame
+            frame.rowconfigure(0,weight=1) #any positive number would do the trick
+
+            btn = ttk.Button(frame)
+            btn.grid(sticky="nswe")"""
+    window.mainloop()
 
 main()

@@ -2,6 +2,7 @@ from box import Box
 import random
 from tkinter import *
 from tkinter import ttk
+from datetime import datetime
 
 x,y,m = 0,0,0 
 
@@ -11,6 +12,7 @@ def main():
     window.resizable(False, False)
     window.title("Minesweeper")
     size, mineCount, window = defInitials(window)
+    print("Setting up game with your settings.", end="")
     global x
     if x == 0:
         quit()
@@ -29,6 +31,7 @@ def main():
 
     for row in board:
         for tile in row:
+            tile.setTotalMines(mineCount)
             neighbors = []
             coords = [
                 {"x": tile.x-1,  "y": tile.y-1},  #top right
@@ -56,9 +59,7 @@ def main():
             tile.setNearby(neighborMines)
             tile.setNearbyBoxes(neighbors)
 
-
-
-
+    print(".", end="")
     draw(board,window)
 
 
@@ -66,11 +67,11 @@ def main():
 # Definierar initialvärden för brädesstorlek och antalet minor
 def defInitials(window):
     print("Initiating...")
-    frame = ttk.Frame(window, padding=0)
+    frame = ttk.Frame(window, padding=10)
     frame.grid(pady=10)
-    Label(frame, text="Rows:").grid(row=1, padx=10, pady=5)
-    Label(frame, text="Columns:").grid(row=2, padx=10, pady=5)
-    Label(frame, text="Mines:").grid(row=3, padx=10, pady=5)
+    Label(frame, text="Rows (MAX 20):").grid(row=1, pady=5, sticky="e")
+    Label(frame, text="Columns (MAX 40):").grid(row=2, pady=5, sticky="e")
+    Label(frame, text="Mines:").grid(row=3, pady=5, sticky="e")
 
     eRow = Entry(frame)
     eCol = Entry(frame)
@@ -80,9 +81,9 @@ def defInitials(window):
     eCol.insert(10, "10")
     eMine.insert(10, "10")
 
-    eRow.grid(column=1, row=1, padx=10, pady=5, sticky="w")
-    eCol.grid(column=1, row=2, padx=10, pady=5, sticky="w")
-    eMine.grid(column=1, row=3, padx=10, pady=5, sticky="w")
+    eRow.grid(column=1, row=1, padx=10, pady=5, sticky="e")
+    eCol.grid(column=1, row=2, padx=10, pady=5, sticky="e")
+    eMine.grid(column=1, row=3, padx=10, pady=5, sticky="e")
 
 
 
@@ -92,7 +93,7 @@ def defInitials(window):
             y = int(eRow.get())
             x = int(eCol.get())
             m = int(eMine.get())
-            if m > x * y or x < 0 or y < 0 or m < 0:
+            if m > x * y or x < 0 or y < 0 or m < 0 or x > 40 or y > 20:
                 raise Exception
             window.destroy()
         except:
@@ -103,8 +104,8 @@ def defInitials(window):
         window.destroy()
         exit(None)
 
-    Button(frame, text="Start", command=lambda:start()).grid(sticky="n", columnspan=2)
-    Button(frame, text="Quit", command=lambda:quitGame()).grid(sticky="n", columnspan=2)
+    Button(frame, text="Start", command=lambda:start()).grid(sticky="ne", row=4, column=1)
+    Button(frame, text="Quit", command=lambda:quitGame()).grid(sticky="nw", row=4, column=0)
 
     print("Game ready!")
 
@@ -129,10 +130,19 @@ def draw(board: list, window: Tk):
         for x in range(len(board[0])):
             board[y][x].getBox(frm)
 
+    print(".")
+
     frm2 = ttk.Frame(window, padding=10)
     frm2.grid()
-    Button(frm2, text="Quit", command=lambda:window.quit()).grid(row=0,column=0, padx=10)
+    Button(frm2, text="Quit", command=lambda:exit(None)).grid(row=0,column=0, padx=10)
     Button(frm2, text="Restart", command=restart).grid(row=0,column=1, padx=10)
+    print("Ready to blow you up!")
+    startingTime = datetime.now()
+    print(startingTime)
+    for y in range(len(board)):
+        for x in range(len(board[0])):
+            board[y][x].startingTime(startingTime)
+
     window.mainloop()
 
 while True:

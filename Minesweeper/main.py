@@ -2,12 +2,18 @@ from box import Box
 import random
 from tkinter import *
 from tkinter import ttk
-from functools import partial
+
+x,y,m = 0,0,0 
 
 # Huvudfunktion för att köra programmet
 def main():
     window = Tk()
+    window.resizable(False, False)
+    window.title("Minesweeper")
     size, mineCount, window = defInitials(window)
+    global x
+    if x == 0:
+        quit()
     board = []
     for y in range(size[1]):
         row = []
@@ -19,7 +25,7 @@ def main():
     for i in mines:
         y = int(i/len(board[0]))
         x = i%len(board[0])
-        board[x][y].setMine()
+        board[y][x].setMine()
 
     for row in board:
         for tile in row:
@@ -59,48 +65,54 @@ def main():
 
 # Definierar initialvärden för brädesstorlek och antalet minor
 def defInitials(window):
-    x = 10
-    y = 10
-    mineCount = 6
-    while True:
+    print("Initiating...")
+    frame = ttk.Frame(window, padding=0)
+    frame.grid(pady=10)
+    Label(frame, text="Rows:").grid(row=1, padx=10, pady=5)
+    Label(frame, text="Columns:").grid(row=2, padx=10, pady=5)
+    Label(frame, text="Mines:").grid(row=3, padx=10, pady=5)
+
+    eRow = Entry(frame)
+    eCol = Entry(frame)
+    eMine = Entry(frame)
+
+    eRow.insert(10, "10")
+    eCol.insert(10, "10")
+    eMine.insert(10, "10")
+
+    eRow.grid(column=1, row=1, padx=10, pady=5, sticky="w")
+    eCol.grid(column=1, row=2, padx=10, pady=5, sticky="w")
+    eMine.grid(column=1, row=3, padx=10, pady=5, sticky="w")
+
+
+
+    def start():
         try:
-            frame = ttk.Frame(window, padding=0)
-            frame.grid(pady=10)
-            Label(frame, text="Rows:").grid(row=1, padx=10, pady=5)
-            Label(frame, text="Columns:").grid(row=2, padx=10, pady=5)
-            Label(frame, text="Mines:").grid(row=3, padx=10, pady=5)
-
-            eRow = Entry(frame)
-            eCol = Entry(frame)
-            eMine = Entry(frame)
-
-            eRow.insert(10, str(x))
-            eCol.insert(10, str(y))
-            eMine.insert(10, str(mineCount))
-
-            eRow.grid(column=1, row=1, padx=10, pady=5, sticky="w")
-            eCol.grid(column=1, row=2, padx=10, pady=5, sticky="w")
-            eMine.grid(column=1, row=3, padx=10, pady=5, sticky="w")
-
-
-
-            def start():
-                x = int(eRow.get())
-                y = int(eCol.get())
-                mineCount = int(eMine.get())
-                if mineCount > x * y or x < 0 or y < 0 or mineCount < 0:
-                    raise Exception
-                window.destroy()
-
-            Button(frame, text="Start", command=start).grid(sticky="n", columnspan=2)
-
-            window.mainloop()
+            global x, y, m
+            y = int(eRow.get())
+            x = int(eCol.get())
+            m = int(eMine.get())
+            if m > x * y or x < 0 or y < 0 or m < 0:
+                raise Exception
+            window.destroy()
         except:
-            print("---\nEnter a valid input\n---")
-        finally:
-            window = Tk()
-            break
-    return [x,y], mineCount, window
+            Label(frame, text="Enter a valid input!", fg="red").grid(row=6)
+            return
+
+    def quitGame():
+        window.destroy()
+        exit(None)
+
+    Button(frame, text="Start", command=lambda:start()).grid(sticky="n", columnspan=2)
+    Button(frame, text="Quit", command=lambda:quitGame()).grid(sticky="n", columnspan=2)
+
+    print("Game ready!")
+
+    window.mainloop()
+    window = Tk()
+    window.resizable(False, False)
+    window.title("Minesweeper")
+    return [x,y], m, window
 
 
 # Ritar brädet på skärmen
@@ -123,4 +135,6 @@ def draw(board: list, window: Tk):
     Button(frm2, text="Restart", command=restart).grid(row=0,column=1, padx=10)
     window.mainloop()
 
-main()
+while True:
+    print("Starting game loop...")
+    main()

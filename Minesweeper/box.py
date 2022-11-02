@@ -1,4 +1,3 @@
-import os
 from tkinter import *
 from tkinter import ttk
 
@@ -13,7 +12,8 @@ class Box:
         self.y = y
         self.window = window
         self.img = PhotoImage(file = f"blank.png")
-        self.__done = False
+        self.checkingWin = False
+        self.__gameOverDone = False
 
     def __str__(self):
         if self.__open:
@@ -38,13 +38,21 @@ class Box:
         return self.__nearby
 
     def setFlagged(self):
-        self.__flagged = not self.__flagged
-        if self.__flagged:
-            self.img = PhotoImage(file = f"flag.png")
-            self.label.config(image=self.img)
-        else:
-            self.img = PhotoImage(file = f"blank.png")
-            self.label.config(image=self.img)
+        if not self.isOpen():
+            self.__flagged = not self.__flagged
+            if self.__flagged:
+                self.img = PhotoImage(file = f"flag.png")
+                self.label.config(image=self.img)
+            else:
+                self.img = PhotoImage(file = f"blank.png")
+                self.label.config(image=self.img)
+            
+            winList = self.recursiveWinCheckFlags()
+            if not False in winList:
+                self.win()
+            else:
+                self.resetWinCheck()
+
 
     def getFlagged(self):
         return self.__flagged
@@ -67,18 +75,94 @@ class Box:
                 if self.__nearby == 0:
                     for box in self.__nearbyBoxes:
                         box.open()
+                
+                winList = self.recursiveWinCheckBlanks()
+                if not False in winList:
+                    self.win()
+                else:
+                    self.resetWinCheck()
+
             else:
                 self.gameOver()
+        
 
     def isOpen(self):
         return self.__open
 
     def gameOver(self):
-        if not self.__done:
+        if not self.__gameOverDone:
             if not self.isOpen():
                 if self.__mine:
                     self.img = PhotoImage(file = "bomb.png")
                     self.label.config(image=self.img)
-            self.__done = True
+                else:
+                    self.open()
+            self.__gameOverDone = True
             for next in self.__nearbyBoxes:
                 next.gameOver()
+
+    def recursiveWinCheckFlags(self):
+        self.checkingWin = True
+        recReturn = []
+        if self.__mine == True:
+            if self.__flagged == False:
+                recReturn.append(False)
+                return recReturn
+
+        if self.__mine == False:
+            if self.__flagged == True:
+                recReturn.append(False)
+                return recReturn
+        for n in self.__nearbyBoxes:
+                if self.__mine and self.__flagged: recReturn.append(True)
+                if not n.checkingWin:
+                    for ret in n.recursiveWinCheckFlags():
+                        recReturn.append(ret)
+
+        return recReturn
+
+    def recursiveWinCheckBlanks(self):
+        self.checkingWin = True
+        recReturn = []
+        if self.__open == False and self.__mine == False:
+            recReturn.append(False)
+            return recReturn
+
+        for n in self.__nearbyBoxes:
+                if self.__mine == False and self.__open: recReturn.append(True)
+                if not n.checkingWin:
+                    for ret in n.recursiveWinCheckBlanks():
+                        if ret is list:
+                            return recReturn.extend(ret)
+                        else:
+                            recReturn.append(ret)
+
+        return recReturn
+
+    def resetWinCheck(self):
+        self.checkingWin = False
+        for n in self.__nearbyBoxes:
+            if n.checkingWin:
+                n.resetWinCheck()
+
+    def win(self):
+        self.gameOver()
+        winScreen = Tk()
+        winScreen.title("You Won!")
+
+        frame = Frame(winScreen, padx=50, pady=50, background="green")
+        frame.pack()
+
+        quitBtn = Button(frame, text="Quit", command=lambda:exit(None))
+        restartBtn = Button(frame, text="New Game", command=lambda:winScreen.quit())
+
+        restartBtn.grid(row=1, column=0)
+        quitBtn.grid(row=1, column=1)
+
+        label = Label(frame, text="Congratulations! You won!", background="green", pady=30)
+        label.grid(row=0, columnspan=2)
+
+        winScreen.mainloop()
+        print("Restarting game...")
+        winScreen.destroy()
+        self.window.destroy()

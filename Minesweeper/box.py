@@ -12,7 +12,7 @@ class Box:
         self.x = x
         self.y = y
         self.window = window
-        self.img = PhotoImage(file = f"blank.png")
+        self.img = PhotoImage(file = f"img/blank.png")
         self.checkingWin = False
         self.__gameOverDone = False
 
@@ -47,10 +47,10 @@ class Box:
         if not self.isOpen():
             self.__flagged = not self.__flagged
             if self.__flagged:
-                self.img = PhotoImage(file = f"flag.png")
+                self.img = PhotoImage(file = f"img/flag.png")
                 self.label.config(image=self.img)
             else:
-                self.img = PhotoImage(file = f"blank.png")
+                self.img = PhotoImage(file = f"img/blank.png")
                 self.label.config(image=self.img)
             
             if isFirst:
@@ -77,7 +77,7 @@ class Box:
         if not self.__open:
             if not self.__mine:
                 self.__open = True
-                self.img = PhotoImage(file = f"{self.__nearby}.png")
+                self.img = PhotoImage(file = f"img/{self.__nearby}.png")
                 self.label.config(image=self.img)
                 if self.__nearby == 0:
                     for box in self.__nearbyBoxes:
@@ -100,7 +100,7 @@ class Box:
         if not self.__gameOverDone:
             if not self.isOpen():
                 if self.__mine:
-                    self.img = PhotoImage(file = "bomb.png")
+                    self.img = PhotoImage(file = "img/bomb.png")
                     self.label.config(image=self.img)
                 else:
                     self.open()
@@ -254,6 +254,8 @@ class Box:
         seconds = seconds - minutes*60
 
         self.gameOver()
+        self.img = PhotoImage(file="img/explode.png")
+        self.label.config(image=self.img)
         winScreen = Tk()
         winScreen.title("You Lost!")
 

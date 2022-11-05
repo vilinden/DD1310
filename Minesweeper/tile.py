@@ -2,26 +2,19 @@ from tkinter import *
 from tkinter import ttk
 from datetime import datetime
 
-class Box:
+class Tile:
     def __init__(self,x,y,window):
         self.__nearby = 0
-        self.__nearbyBoxes = []
+        self.__nearbyTiles = []
         self.__mine = False
         self.__flagged = False
         self.__open = False
         self.x = x
         self.y = y
-        self.window = window
-        self.img = PhotoImage(file = f"img/blank.png")
+        self.__window = window
+        self.__img = PhotoImage(file = f"img/blank.png")
         self.checkingWin = False
         self.__gameOverDone = False
-
-    def __str__(self):
-        if self.__open:
-            if self.__mine:
-                return "X"
-            else: return str(self.__nearby)
-        else: return ""
 
     def setTotalMines(self, mines: int):
         self.__totalMines = mines
@@ -29,8 +22,8 @@ class Box:
     def startingTime(self, time):
         self.__startTime = time
 
-    def setNearbyBoxes(self, boxes: list):
-        self.__nearbyBoxes = boxes
+    def setNearbyTiles(self, tiles: list):
+        self.__nearbyTiles = tiles
 
     def setMine(self):
         self.__mine = True
@@ -47,11 +40,11 @@ class Box:
         if not self.isOpen():
             self.__flagged = not self.__flagged
             if self.__flagged:
-                self.img = PhotoImage(file = f"img/flag.png")
-                self.label.config(image=self.img)
+                self.__img = PhotoImage(file = f"img/flag.png")
+                self.label.config(image=self.__img)
             else:
-                self.img = PhotoImage(file = f"img/blank.png")
-                self.label.config(image=self.img)
+                self.__img = PhotoImage(file = f"img/blank.png")
+                self.label.config(image=self.__img)
             
             if isFirst:
                 winList = self.recursiveWinCheckFlags()
@@ -65,8 +58,8 @@ class Box:
         return self.__flagged
 
 
-    def getBox(self, frame):
-        self.label = Label(frame, image=self.img)
+    def getTile(self, frame):
+        self.label = Label(frame, image=self.__img)
         self.label.grid(column = self.x, row = self.y)
         self.label.bind("<Button-1>", lambda a:self.open(True))
         self.label.bind("<Button-2>", lambda a:self.setFlagged(True))
@@ -77,11 +70,11 @@ class Box:
         if not self.__open:
             if not self.__mine:
                 self.__open = True
-                self.img = PhotoImage(file = f"img/{self.__nearby}.png")
-                self.label.config(image=self.img)
+                self.__img = PhotoImage(file = f"img/{self.__nearby}.png")
+                self.label.config(image=self.__img)
                 if self.__nearby == 0:
-                    for box in self.__nearbyBoxes:
-                        box.open()
+                    for tile in self.__nearbyTiles:
+                        tile.open()
                 if isFirst:
                     winList = self.recursiveWinCheckBlanks()
                     if not False in winList:
@@ -100,12 +93,12 @@ class Box:
         if not self.__gameOverDone:
             if not self.isOpen():
                 if self.__mine:
-                    self.img = PhotoImage(file = "img/bomb.png")
-                    self.label.config(image=self.img)
+                    self.__img = PhotoImage(file = "img/bomb.png")
+                    self.label.config(image=self.__img)
                 else:
                     self.open()
             self.__gameOverDone = True
-            for next in self.__nearbyBoxes:
+            for next in self.__nearbyTiles:
                 next.gameOver()
 
     def recursiveWinCheckFlags(self):
@@ -120,7 +113,7 @@ class Box:
             if self.__flagged == True:
                 recReturn.append(False)
                 return recReturn
-        for n in self.__nearbyBoxes:
+        for n in self.__nearbyTiles:
                 if self.__mine and self.__flagged: recReturn.append(True)
                 if not n.checkingWin:
                     for ret in n.recursiveWinCheckFlags():
@@ -135,7 +128,7 @@ class Box:
             recReturn.append(False)
             return recReturn
 
-        for n in self.__nearbyBoxes:
+        for n in self.__nearbyTiles:
                 if self.__mine == False and self.__open: recReturn.append(True)
                 if not n.checkingWin:
                     for ret in n.recursiveWinCheckBlanks():
@@ -148,7 +141,7 @@ class Box:
 
     def resetWinCheck(self):
         self.checkingWin = False
-        for n in self.__nearbyBoxes:
+        for n in self.__nearbyTiles:
             if n.checkingWin:
                 n.resetWinCheck()
 
@@ -168,7 +161,7 @@ class Box:
                 name = str(nameEntry.get())
                 if len(name) < 1 or len(name) > 15:
                     raise
-                f = open("top10.txt", "r")
+                f = open("top10.txt", "r", encoding="UTF-16")
                 unformattedTopList = f.readlines()
                 f.close
                 topList=[]
@@ -177,23 +170,28 @@ class Box:
                 scores = []
                 for i in range(len(topList)):
                     scores.append(float(topList[i][1]))
-                if len(scores) < 10:
-                    topList.append([name, score])
 
-                topList = sorted(topList, key=lambda list: list[1])
+                topList.append([name, score])
 
+                topList = sorted(topList, key=lambda list: list[1])[::-1]
+                print(topList)
                 f = open("top10.txt", "w")
                 writtingList = []
-                for i in range(len(topList)):
-                    writtingList.append(f"{topList[i][0]}:{topList[i][1]}\n")
-                f.writelines(writtingList[::-1])
+                if len(topList) > 10:
+                    for i in range(10):
+                        writtingList.append(f"{topList[i][0]}:{topList[i][1]}\n")
+                else:
+                    for i in range(len(topList)):
+                        writtingList.append(f"{topList[i][0]}:{topList[i][1]}\n")
+
+                f.writelines(writtingList)
                 f.close()
                 saveNameBtn.config(state='disabled', text="Saved!")
                 try: 
                     winScreen.nametowidget("failedToSave").destroy()
                 except: pass
 
-            except Exception as err:
+            except Exception:
                 try: winScreen.nametowidget("failedToSave")
                 except: Label(winScreen, text="Failed to save score!", fg="red", name="failedToSave").pack()
 
@@ -243,7 +241,7 @@ class Box:
         winScreen.mainloop()
         print("Restarting game...")
         winScreen.destroy()
-        self.window.destroy()
+        self.__window.destroy()
 
     def loose(self):
         gameLengthTime = datetime.now() - self.__startTime
@@ -254,8 +252,8 @@ class Box:
         seconds = seconds - minutes*60
 
         self.gameOver()
-        self.img = PhotoImage(file="img/explode.png")
-        self.label.config(image=self.img)
+        self.__img = PhotoImage(file="img/explode.png")
+        self.label.config(image=self.__img)
         winScreen = Tk()
         winScreen.title("You Lost!")
 
@@ -274,4 +272,4 @@ class Box:
         winScreen.mainloop()
         print("Restarting game...")
         winScreen.destroy()
-        self.window.destroy()
+        self.__window.destroy()

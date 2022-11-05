@@ -1,4 +1,4 @@
-from box import Box
+from tile import Tile
 import random
 from tkinter import *
 from tkinter import ttk
@@ -8,59 +8,61 @@ x,y,m = 0,0,0
 
 # Huvudfunktion för att köra programmet
 def main():
-    window = Tk()
-    window.resizable(False, False)
-    window.title("Minesweeper")
-    size, mineCount, window = defInitials(window)
-    print("Setting up game with your settings.", end="")
-    global x
-    if x == 0:
-        quit()
-    board = []
-    for y in range(size[1]):
-        row = []
-        for x in range(size[0]):
-            row.append(Box(x,y,window))
-        board.append(row)
-    
-    mines = random.sample(range(len(board[0])*len(board)), mineCount)
-    for i in mines:
-        y = int(i/len(board[0]))
-        x = i%len(board[0])
-        board[y][x].setMine()
+    while True:
+        print("Starting game loop...")
+        window = Tk()
+        window.resizable(False, False)
+        window.title("Minesweeper")
+        size, mineCount, window = defInitials(window)
+        print("Setting up game with your settings.", end="")
+        global x
+        if x == 0:
+            quit()
+        board = []
+        for y in range(size[1]):
+            row = []
+            for x in range(size[0]):
+                row.append(Tile(x,y,window))
+            board.append(row)
+        
+        mines = random.sample(range(len(board[0])*len(board)), mineCount)
+        for i in mines:
+            y = int(i/len(board[0]))
+            x = i%len(board[0])
+            board[y][x].setMine()
 
-    for row in board:
-        for tile in row:
-            tile.setTotalMines(mineCount)
-            neighbors = []
-            coords = [
-                {"x": tile.x-1,  "y": tile.y-1},  #top right
-                {"x": tile.x-1,  "y": tile.y},    #top middle
-                {"x": tile.x-1,  "y": tile.y+1},  #top left
-                {"x": tile.x,    "y": tile.y-1},  #left
-                {"x": tile.x,    "y": tile.y+1},  #right
-                {"x": tile.x+1,  "y": tile.y-1},  #bottom right
-                {"x": tile.x+1,  "y": tile.y},    #bottom middle
-                {"x": tile.x+1,  "y": tile.y+1},  #bottom left
-            ]
-            for coord in coords:
-                try:
-                    if coord["x"] < 0 or coord["y"] < 0:
-                        raise
-                    neighbors.append(board[coord["y"]][coord["x"]])
-                except:
-                    pass
-            
-            neighborMines = 0
-            for n in neighbors:
-                if n.getMine():
-                    neighborMines += 1
+        for row in board:
+            for tile in row:
+                tile.setTotalMines(mineCount)
+                neighbors = []
+                coords = [
+                    {"x": tile.x-1,  "y": tile.y-1},  #top right
+                    {"x": tile.x-1,  "y": tile.y},    #top middle
+                    {"x": tile.x-1,  "y": tile.y+1},  #top left
+                    {"x": tile.x,    "y": tile.y-1},  #left
+                    {"x": tile.x,    "y": tile.y+1},  #right
+                    {"x": tile.x+1,  "y": tile.y-1},  #bottom right
+                    {"x": tile.x+1,  "y": tile.y},    #bottom middle
+                    {"x": tile.x+1,  "y": tile.y+1},  #bottom left
+                ]
+                for coord in coords:
+                    try:
+                        if coord["x"] < 0 or coord["y"] < 0:
+                            raise
+                        neighbors.append(board[coord["y"]][coord["x"]])
+                    except:
+                        pass
+                
+                neighborMines = 0
+                for n in neighbors:
+                    if n.getMine():
+                        neighborMines += 1
 
-            tile.setNearby(neighborMines)
-            tile.setNearbyBoxes(neighbors)
+                tile.setNearby(neighborMines)
+                tile.setNearbyTiles(neighbors)
 
-    print(".", end="")
-    draw(board,window)
+        print(".", end="")
+        draw(board,window)
 
 
 
@@ -128,7 +130,7 @@ def draw(board: list, window: Tk):
     frm.grid()
     for y in range(len(board)):
         for x in range(len(board[0])):
-            board[y][x].getBox(frm)
+            board[y][x].getTile(frm)
 
     print(".")
 
@@ -145,6 +147,4 @@ def draw(board: list, window: Tk):
 
     window.mainloop()
 
-while True:
-    print("Starting game loop...")
-    main()
+main()

@@ -4,8 +4,6 @@ from tkinter import *
 from tkinter import ttk
 from datetime import datetime
 
-x,y,m = 0,0,0 
-
 # Huvudfunktion för att köra programmet
 def main():
     while True:
@@ -14,10 +12,9 @@ def main():
         window.resizable(False, False)
         window.title("Minesweeper")
         size, mineCount, window = defInitials(window)
+        print(f"Size: {size[0]}x{size[1]}")
+        print(f"Mines: {mineCount}")
         print("Setting up game with your settings.", end="")
-        global x
-        if x == 0:
-            quit()
         board = []
         for y in range(size[1]):
             row = []
@@ -68,6 +65,7 @@ def main():
 
 # Definierar initialvärden för brädesstorlek och antalet minor
 def defInitials(window):
+    x,y,m = 0,0,0
     print("Initiating...")
     frame = ttk.Frame(window, padding=10)
     frame.grid(pady=10)
@@ -88,20 +86,22 @@ def defInitials(window):
     eMine.grid(column=1, row=3, padx=10, pady=5, sticky="e")
 
 
-
+    # Hanterar inmatningen av brädets storlek och antalet minor
     def start():
         try:
-            global x, y, m
+            nonlocal x,y,m
             y = int(eRow.get())
             x = int(eCol.get())
             m = int(eMine.get())
-            if m > x * y or x < 0 or y < 0 or m < 0 or x > 40 or y > 20:
+            if m > x * y or x <= 0 or y <= 0 or m <= 0 or x > 40 or y > 20:
                 raise Exception
             window.destroy()
         except:
             Label(frame, text="Enter a valid input!", fg="red").grid(row=6)
             return
 
+    # Om användare klickar på Quit knappen körs denna funktion.
+    # Den förstör tkinter fönstret och dödar programmet
     def quitGame():
         window.destroy()
         exit(None)

@@ -1,8 +1,9 @@
 from tkinter import *
-from tkinter import ttk
 from datetime import datetime
 
+# Klass för rutor
 class Tile:
+    # Initierar ett Tile-objekt
     def __init__(self,x,y,window):
         self.__nearby = 0
         self.__nearbyTiles = []
@@ -16,26 +17,34 @@ class Tile:
         self.checkingWin = False
         self.__gameOverDone = False
 
+    # Setter totala antalet minor på brädet till attributet för att kunna räkna poäng i slutet
     def setTotalMines(self, mines: int):
         self.__totalMines = mines
 
+    # Sätter starttiden då spelet började
     def startingTime(self, time):
         self.__startTime = time
 
+    # Sätter en lista över angränsande rutor
     def setNearbyTiles(self, tiles: list):
         self.__nearbyTiles = tiles
 
+    # Sätter rutan till en mina
     def setMine(self):
         self.__mine = True
         self.__nearby = "bomb"
+    # Returnerar boolesk beroende på om rutan är en mina
     def getMine(self):
         return self.__mine
 
+    # Sätter hur många minor som angränsar till rutan.
     def setNearby(self, nearby: int):
         self.__nearby = nearby
     def getNearby(self):
         return self.__nearby
 
+    # Markerar rutan som flaggad. isFirst är viktigt för att kontrollen om vinst algoritmen ska
+    # kunna köras någotlunda effektivt.
     def setFlagged(self, isFirst = False):
         if not self.isOpen():
             self.__flagged = not self.__flagged
@@ -53,11 +62,11 @@ class Tile:
                 else:
                     self.resetWinCheck()
 
-
+    # Returnerar boolesk om rutan är flaggad av användaren
     def getFlagged(self):
         return self.__flagged
 
-
+    # Returnerar tkinter-label för denna ruta
     def getTile(self, frame):
         self.label = Label(frame, image=self.__img)
         self.label.grid(column = self.x, row = self.y)
@@ -66,6 +75,7 @@ class Tile:
         self.label.bind("<Button-3>", lambda a:self.setFlagged(True))
         return self.label
 
+    # Hanterar användarens klick på rutan
     def open(self, isFirst = False):
         if not self.__open:
             if not self.__mine:
@@ -85,10 +95,11 @@ class Tile:
             else:
                 self.loose()
         
-
+    # Returnerar boolesk om rutan är öppen eller ej
     def isOpen(self):
         return self.__open
 
+    # Hanterar spelplanen när spelet är över (Visar alla minor)
     def gameOver(self):
         if not self.__gameOverDone:
             if not self.isOpen():
@@ -101,6 +112,7 @@ class Tile:
             for next in self.__nearbyTiles:
                 next.gameOver()
 
+    # Går rekursivt igenom spelbrädet och kollar om alla minor och endast minor är flaggade => Vinst
     def recursiveWinCheckFlags(self):
         self.checkingWin = True
         recReturn = []
@@ -121,6 +133,7 @@ class Tile:
 
         return recReturn
 
+    # Går rekursivt igenom spelbrädet och kollar om alla icke-minor är öppnade => Vinst
     def recursiveWinCheckBlanks(self):
         self.checkingWin = True
         recReturn = []
@@ -139,29 +152,32 @@ class Tile:
 
         return recReturn
 
+    # Återställer attributet checkingWin för alla rutor rekursivt
     def resetWinCheck(self):
         self.checkingWin = False
         for n in self.__nearbyTiles:
             if n.checkingWin:
                 n.resetWinCheck()
 
+    # Hanterar vinst
     def win(self):
         gameLengthTime = datetime.now() - self.__startTime
         seconds = gameLengthTime.total_seconds()
 
-        score = self.__totalMines * 100 / seconds
+        score = self.__totalMines * 1000 / (seconds + 100)
 
         hours = int(seconds / 3600)
         seconds = seconds - hours*3600
         minutes = int(seconds / 60)
         seconds = seconds - minutes*60
 
+        # Sparar resultatet i top10lista
         def save():
             try:
                 name = str(nameEntry.get())
                 if len(name) < 1 or len(name) > 15:
                     raise
-                f = open("top10.txt", "r", encoding="UTF-16")
+                f = open("top10.txt", "r", encoding="ASCII")
                 unformattedTopList = f.readlines()
                 f.close
                 topList=[]
@@ -191,12 +207,13 @@ class Tile:
                     winScreen.nametowidget("failedToSave").destroy()
                 except: pass
 
-            except Exception:
+            except Exception as err:
                 try: winScreen.nametowidget("failedToSave")
-                except: Label(winScreen, text="Failed to save score!", fg="red", name="failedToSave").pack()
+                except: print(err); Label(winScreen, text="Failed to save score!", fg="red", name="failedToSave").pack()
 
+        # Ritar ut top10listan med tkinter
         def showTop10():
-            top10Window = Tk()
+            top10Window = Tk("Top 10")
             f = open("top10.txt", "r")
             unformattedTopList = f.readlines()
             f.close
@@ -225,7 +242,7 @@ class Tile:
         restartBtn.grid(row=3, column=0, sticky="w")
         quitBtn.grid(row=3, column=2, sticky="ne")
 
-        label = Label(frame, text="Congratulations! You won!\nThe game took {} hours, {} minutes and {:.2f} seconds!".format(hours, minutes, seconds), background="lightgreen", pady=30)
+        label = Label(frame, text="Congratulations! You won!\nThe game took {} hours, {} minutes and {:.2f} seconds!\nThis gives you a score of {:.2f}!".format(hours, minutes, seconds, score), background="lightgreen", pady=30)
         label.grid(row=0, columnspan=3)
 
         nameEntry = Entry(frame)
@@ -243,6 +260,7 @@ class Tile:
         winScreen.destroy()
         self.__window.destroy()
 
+    # Hanterar förlust
     def loose(self):
         gameLengthTime = datetime.now() - self.__startTime
         seconds = gameLengthTime.total_seconds()

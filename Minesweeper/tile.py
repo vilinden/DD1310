@@ -3,7 +3,7 @@ from datetime import datetime
 
 # Klass för rutor
 class Tile:
-    # Initierar ett Tile-objekt
+    # Initiferar ett Tile-objekt
     def __init__(self,x,y,window):
         self.__nearby = 0
         self.__nearbyTiles = []
@@ -177,7 +177,13 @@ class Tile:
                 name = str(nameEntry.get())
                 if len(name) < 1 or len(name) > 15:
                     raise
-                f = open("top10.txt", "r", encoding="ASCII")
+                try:
+                    f = open("top10.txt", "r", encoding="ASCII")
+                except:
+                    f = open("top10.txt", "w+")
+                    f.close
+                    f = open("top10.txt", "r", encoding="ASCII")
+
                 unformattedTopList = f.readlines()
                 f.close
                 topList=[]
@@ -190,7 +196,6 @@ class Tile:
                 topList.append([name, score])
 
                 topList = sorted(topList, key=lambda list: list[1])[::-1]
-                print(topList)
                 f = open("top10.txt", "w")
                 writtingList = []
                 if len(topList) > 10:
@@ -214,9 +219,15 @@ class Tile:
         # Ritar ut top10listan med tkinter
         def showTop10():
             top10Window = Tk("Top 10")
-            f = open("top10.txt", "r")
-            unformattedTopList = f.readlines()
-            f.close
+            try:
+                f = open("top10.txt", "r")
+                unformattedTopList = f.readlines()
+                f.close
+            except:
+                f = open("top10.txt", "w+")
+                unformattedTopList = f.readlines()
+                f.close
+            
 
             tableDic = {
                 0:"gold",

@@ -1,12 +1,26 @@
 class Tile:
-    def __init__(self, nearbyBombs = 0):
-        self.nearbyBombs = nearbyBombs
+    def __init__(self, nearbyMines = 0):
+        self.nearbyMines = nearbyMines
+        self.flagged = False
+        self.open = False
 
-    def __str__(self) -> str:
-        return str(self.nearbyBombs)
+    def get_nearbyMines(self):
+        return self.nearbyMines
 
-    def get_nearbyBombs(self):
-        return self.nearbyBombs
+    def set_open(self):
+        self.open = True
+
+    def get_open(self):
+        return self.open
+    
+    def set_flagged(self):
+        self.flagged = True
+
+    def get_flagged(self):
+        return self.flagged
+    
+    def set_unflagged(self):
+        self.flagged = False
 
 class Board:
     def __init__(self, x = 10, y = 10, bombs = 5):
@@ -92,14 +106,41 @@ class Board:
 
 class GUI:
     import tkinter as tk
-    def __init__(self):
+    def __init__(self, parent):
+        self.parent = parent
         self.rootWindow = self.tk.Tk()
+        self.blankPath = "./img/blank.png"
+        self.flagPath = "./img/flag.png"
+        self.tileImage = {
+            "blank" : self.tk.PhotoImage(file = self.blankPath),
+            "flag" : self.tk.PhotoImage(file = self.flagPath),
+            "explode" : self.tk.PhotoImage(file = "./img/explode.png"),
+            0 : self.tk.PhotoImage(file = "./img/0.png"),
+            1 : self.tk.PhotoImage(file = "./img/1.png"),
+            2 : self.tk.PhotoImage(file = "./img/2.png"),
+            3 : self.tk.PhotoImage(file = "./img/3.png"),
+            4 : self.tk.PhotoImage(file = "./img/4.png"),
+            5 : self.tk.PhotoImage(file = "./img/5.png"),
+            6 : self.tk.PhotoImage(file = "./img/6.png"),
+            7 : self.tk.PhotoImage(file = "./img/7.png"),
+            8 : self.tk.PhotoImage(file = "./img/8.png"),
+            9 : self.tk.PhotoImage(file = "./img/bomb.png")
+        }
         self.frame = self.tk.Frame(self.rootWindow)
         self.frame.grid(pady=20, padx=10)
         self.nextRow = 0
         self.entry = []
         self.label = []
         self.btn = []
+
+    def drawTile(self, tile, x, y):
+        t = tile.get_nearbyMines()
+        tileBox = self.tk.Label(self.frame, image = self.tileImage["blank"], text=t)
+        tileBox.grid(column = x, row = y)
+        tileBox.bind("<Button-1>", lambda a : self.openTile(tileBox, tile))
+        tileBox.bind("<Button-2>", lambda b : self.flagTile(tileBox, tile))
+        tileBox.bind("<Button-3>", lambda c : self.flagTile(tileBox, tile))
+        return tileBox
 
     def input(self, labelText, standardInput=""):
         self.entry.append(self.tk.Entry(self.frame))
@@ -120,9 +161,33 @@ class GUI:
             returnData.append(entry.get())
         return returnData
 
+    def openTile(self, tileBox, tile, explodeBomb = True):
+        showImg = tile.get_nearbyMines()
+        if showImg == 9 and explodeBomb:
+            showImg = "explode"
+        tileBox.config(image = self.tileImage[showImg])
+        tile.set_open()
+        self.parent.checkWinOpen()
+        if showImg == 0:
+            self.parent.recursiveOpen(tileBox, tile)
+
+    def flagTile(self, tileBox, tile):
+        try:
+            if self.rootWindow.call(tileBox.cget('image'), 'cget', '-file') == self.blankPath:
+                tileBox.config(image = self.tileImage["flag"])
+                tile.set_flagged()
+            elif self.rootWindow.call(tileBox.cget('image'), 'cget', '-file') == self.flagPath:
+                tileBox.config(image = self.tileImage["blank"])
+                tile.set_unflagged()
+            
+            self.parent.checkWinFlag()
+        except:
+            pass
+
     def newWindow(self):
+        self.rootWindow.destroy()
         self.rootWindow.quit()
-        self.__init__()
+        self.__init__(self.parent)
 
     def update(self):
         self.rootWindow.mainloop()

@@ -11,11 +11,19 @@ class Tile:
 class Board:
     def __init__(self, x = 10, y = 10, bombs = 5):
         self.tiles = self.buildBoard(x, y, bombs)
-        boardMatrix = self.createTileObjects(self.tiles)
-        for row in boardMatrix:
-            for tile in row:
-                print(tile, end=" ")
-            print()
+        self.boardMatrix = self.createTileObjects(self.tiles)
+
+    def __str__(self):
+        returnStr = ""
+        for row in self.boardMatrix:
+            for col in row:
+                returnStr += str(col) + " "
+            returnStr += "\n"
+
+        return returnStr
+
+    def get_matrix(self):
+        return self.boardMatrix
 
     def buildBoard(self, x, y, bombs):
         tiles = []
@@ -89,10 +97,11 @@ class GUI:
         self.frame = self.tk.Frame(self.rootWindow)
         self.frame.grid(pady=20, padx=10)
         self.nextRow = 0
-
-    def input(self, labelText, standardInput=""):
         self.entry = []
         self.label = []
+        self.btn = []
+
+    def input(self, labelText, standardInput=""):
         self.entry.append(self.tk.Entry(self.frame))
         self.label.append(self.tk.Label(self.frame, text=labelText))
         self.entry[-1].insert(0, standardInput)
@@ -100,7 +109,20 @@ class GUI:
         self.entry[-1].grid(row=self.nextRow, column=1)
         self.nextRow += 1
     
-    def button(self)
-    
+    def button(self, btnText, func):
+        self.btn.append(self.tk.Button(self.frame, text=btnText, command=func))
+        self.btn[-1].grid(row=self.nextRow, column = 0)
+        self.nextRow += 1
+        
+    def getEntryData(self):
+        returnData = []
+        for entry in self.entry:
+            returnData.append(entry.get())
+        return returnData
+
+    def newWindow(self):
+        self.rootWindow.quit()
+        self.__init__()
+
     def update(self):
         self.rootWindow.mainloop()

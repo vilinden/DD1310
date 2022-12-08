@@ -108,9 +108,11 @@ class GUI:
     import tkinter as tk
     def __init__(self, parent):
         self.parent = parent
-        self.rootWindow = self.tk.Tk()
         self.blankPath = "./img/blank.png"
         self.flagPath = "./img/flag.png"
+        self.background = "white"
+        self.rootWindow = self.tk.Tk(className = "Minesweeper")
+        self.rootWindow.config(bg=self.background)
         self.tileImage = {
             "blank" : self.tk.PhotoImage(file = self.blankPath),
             "flag" : self.tk.PhotoImage(file = self.flagPath),
@@ -126,12 +128,16 @@ class GUI:
             8 : self.tk.PhotoImage(file = "./img/8.png"),
             9 : self.tk.PhotoImage(file = "./img/bomb.png")
         }
-        self.frame = self.tk.Frame(self.rootWindow)
-        self.frame.grid(pady=20, padx=10)
+        self.frame = self.tk.Frame(self.rootWindow, background=self.background)
+        self.frame.grid(padx=20, pady=20)
         self.nextRow = 0
         self.entry = []
         self.label = []
         self.btn = []
+
+    def set_background(self, color):
+        self.background = color
+        self.frame.configure(background=self.background)
 
     def drawTile(self, tile, x, y):
         t = tile.get_nearbyMines()
@@ -142,18 +148,26 @@ class GUI:
         tileBox.bind("<Button-3>", lambda c : self.flagTile(tileBox, tile))
         return tileBox
 
-    def input(self, labelText, standardInput=""):
+    def drawInput(self, labelText, standardInput="", column = 1, sticky = ""):
         self.entry.append(self.tk.Entry(self.frame))
-        self.label.append(self.tk.Label(self.frame, text=labelText))
+        self.drawLabel(labelText, sticky = "e", newLine=False)
         self.entry[-1].insert(0, standardInput)
-        self.label[-1].grid(row=self.nextRow, column=0, sticky="e")
-        self.entry[-1].grid(row=self.nextRow, column=1)
+        self.entry[-1].grid(row=self.nextRow, column=column, sticky=sticky)
         self.nextRow += 1
     
-    def button(self, btnText, func):
+    def drawButton(self, btnText, func, column = 0, sticky = "", newLine = True):
         self.btn.append(self.tk.Button(self.frame, text=btnText, command=func))
-        self.btn[-1].grid(row=self.nextRow, column = 0)
-        self.nextRow += 1
+        self.btn[-1].grid(row=self.nextRow, column = column, sticky=sticky)
+        self.nextRow += 1*newLine
+    
+    def drawLabel(self, text, column = 0, sticky = "", newLine = True, checkDouble = False, textColor = "black"):
+        if checkDouble:
+            for label in self.label:
+                if label.cget('text') == text:
+                    return
+        self.label.append(self.tk.Label(self.frame, text=text, background=self.background, foreground=textColor))
+        self.label[-1].grid(row=self.nextRow, column=column, sticky=sticky)
+        self.nextRow += 1*newLine
         
     def getEntryData(self):
         returnData = []
@@ -163,10 +177,13 @@ class GUI:
 
     def openTile(self, tileBox, tile, explodeBomb = True):
         showImg = tile.get_nearbyMines()
+        tile.set_open()
         if showImg == 9 and explodeBomb:
             showImg = "explode"
+            tileBox.config(image = self.tileImage[showImg])
+            self.parent.loose()
+            return
         tileBox.config(image = self.tileImage[showImg])
-        tile.set_open()
         self.parent.checkWinOpen()
         if showImg == 0:
             self.parent.recursiveOpen(tileBox, tile)
@@ -189,5 +206,25 @@ class GUI:
         self.rootWindow.quit()
         self.__init__(self.parent)
 
+    def drawLoose(self):
+        self.background = "red"
+        self.createToplevel()
+        self.drawLabel("You Lost!")
+        self.drawButton("Restart", self.parent.restart, sticky="w", newLine=False)
+        self.drawButton("Quit", self.parent.quit, column=1, sticky="e")
+        print("A")
+        self.update()
+
+    def createToplevel(self):
+        self.toplevel = self.tk.Toplevel(self.rootWindow, background=self.background)
+        self.toplevel.grab_set()
+        self.toplevel.config(bg=self.background)
+        self.frame = self.tk.Frame(self.toplevel, background=self.background)
+        self.frame.grid(padx=20, pady=20)
+
     def update(self):
-        self.rootWindow.mainloop()
+        try:
+            self.toplevel.mainloop()
+        except:
+            self.rootWindow.mainloop()
+   

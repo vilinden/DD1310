@@ -22,17 +22,22 @@ class Program:
 
     def getBoardSettingsData(self):
         data = self.gui.getEntryData()
-        self.boardWidth = int(data[0])
-        self.boardHeight = int(data[1])
-        self.amountOfBombs = int(data[2])
-        self.gui.newWindow()
+        try:
+            self.boardWidth = int(data[0])
+            self.boardHeight = int(data[1])
+            self.amountOfBombs = int(data[2])
+            if self.boardWidth > 40 or self.boardHeight > 20 or self.amountOfBombs > self.boardHeight*self.boardWidth:
+                raise
+            self.gui.newWindow()
+        except:
+            self.gui.drawLabel("Invalid input", checkDouble = True, sticky="e", column=1, textColor="red")
         
 
     def getBoardSettings(self):
-        self.gui.input("Width:", 10)
-        self.gui.input("Height:", 10)
-        self.gui.input("Bombs:", 5)
-        self.gui.button("Start", lambda : self.getBoardSettingsData())
+        self.gui.drawInput("Width:", 10)
+        self.gui.drawInput("Height:", 10)
+        self.gui.drawInput("Bombs:", 5)
+        self.gui.drawButton("Start", lambda : self.getBoardSettingsData())
         self.gui.update()
 
     def recursiveOpen(self, tileBox, tile):
@@ -92,11 +97,17 @@ class Program:
         for i in range(len(self.tileBoxes)):
             box = self.tileBoxes[i]
             tile = self.board.get_matrix()[int(i/len(self.board.get_matrix()))][i%len(self.board.get_matrix()[0])]
-            if not tile.get_open:
+            if not tile.get_open():
                 self.gui.openTile(box, tile, explodeBomb=False)
 
-        self.gui.update()
+    def loose(self):
+        self.openAllTiles()
+        self.top10list = self.gui.drawLoose()
 
+    def restart(self):
+        pass
+    def quit(self):
+        pass
 
 if __name__ == "__main__":
     program = Program()

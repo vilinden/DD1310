@@ -1,8 +1,15 @@
+import datetime
 from classes import *
+import os
 
 class Program:
     def main(self):
+        self.top10Path = os.path.realpath(os.path.dirname(__file__)) + "/top10.txt"
         self.gui = GUI(self)
+        self.top10list = self.readFile()
+        self.score = 0
+        self.startTime = datetime.datetime.now()
+        self.winTime = 0
         while True:    
             self.boardWidth, self.boardHeight, self.amountOfBombs = 0,0,0
             try:
@@ -18,6 +25,7 @@ class Program:
             for tile in row:
                 x = row.index(tile)
                 self.tileBoxes.append(self.gui.drawTile(tile, x, y))
+        self.gui.drawQuitReset()
         self.gui.update()
 
     def getBoardSettingsData(self):
@@ -78,8 +86,7 @@ class Program:
                         win = False
 
         if win: 
-            self.openAllTiles()
-            print("WIN") #win
+            self.win()
 
     def checkWinOpen(self):
         win = True
@@ -90,24 +97,73 @@ class Program:
                         win = False
 
         if win: 
-            self.openAllTiles()
-            print("WIN") #win
+            self.win()
+
+    def win(self):
+        self.winTime = datetime.datetime.now() - self.startTime
+        self.score = (self.amountOfBombs/(self.boardWidth * self.boardHeight))*1000/self.winTime.total_seconds()
+        self.openAllTiles()
+        self.gui.drawWin(self.winTime, self.score)
 
     def openAllTiles(self):
         for i in range(len(self.tileBoxes)):
             box = self.tileBoxes[i]
             tile = self.board.get_matrix()[int(i/len(self.board.get_matrix()))][i%len(self.board.get_matrix()[0])]
             if not tile.get_open():
-                self.gui.openTile(box, tile, explodeBomb=False)
+                self.gui.openTile(box, tile, explodeBomb=False, checkWin = False)
+
+
+    def readFile(self):
+        lines = []
+        try:
+            f = open(self.top10Path, "r", encoding="ASCII")
+            lines = f.readlines()
+            for i in range(len(lines)):
+                lines[i] = lines[i].removesuffix("\n")
+        except:
+            f = open(self.top10Path, "x")
+        f.close()
+        return lines
+
+    def saveScore(self, button):
+        try:
+            if type(self.top10list[0]) != list:
+                for result in self.top10list:
+                    splittedResult = result.split(":")
+                    splittedResult[1] = float(splittedResult[1])
+                    self.top10list[self.top10list.index(result)] = splittedResult
+            name = self.gui.getEntryData()[0]
+            if len(name) < 1 or len(name) > 15:
+                raise
+            self.top10list.append([name, self.score])
+            self.top10list = sorted(self.top10list, key=lambda list: list[1])[::-1]
+            f = open(self.top10Path, "w", encoding="ASCII")
+            for i in range(10):
+                f.write(self.top10list[i][0]+":"+str(self.top10list[i][1])+"\n")
+            f.close()
+        except Exception as err:
+            print(err)
+            self.gui.drawLabel("Couldn't save to file!", columnSpan=4, checkDouble=True, textColor="red")
+        button.config(state = "disabled")
+        button.config(text = "Saved!")
+
+    def showTop10(self):
+        top10 = self.readFile()
+        for i in range(len(top10)):
+            top10[i] = top10[i].split(":")
+        self.gui.drawTop10(top10)
+        pass
 
     def loose(self):
         self.openAllTiles()
-        self.top10list = self.gui.drawLoose()
+        self.gui.drawLoose()
 
     def restart(self):
-        pass
+        self.gui.destroy()
+        self.main()
+
     def quit(self):
-        pass
+        self.gui.destroy()
 
 if __name__ == "__main__":
     program = Program()

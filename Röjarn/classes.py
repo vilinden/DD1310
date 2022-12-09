@@ -4,23 +4,25 @@ class Tile:
         self.flagged = False
         self.open = False
 
-    def get_nearbyMines(self):
+    def getNearbyMines(self):
         return self.nearbyMines
 
-    def set_open(self):
+    def setOpen(self):
         self.open = True
 
-    def get_open(self):
+    def getOpen(self):
         return self.open
     
-    def set_flagged(self):
-        self.flagged = True
+    def setFlagged(self):
+        if self.flagged:
+            self.flagged = False
+            return "blank"
+        else:
+            self.flagged = True
+            return "flag"
 
-    def get_flagged(self):
+    def getFlagged(self):
         return self.flagged
-    
-    def set_unflagged(self):
-        self.flagged = False
 
 class Board:
     def __init__(self, x = 10, y = 10, bombs = 5):
@@ -36,7 +38,7 @@ class Board:
 
         return returnStr
 
-    def get_matrix(self):
+    def getMatrix(self):
         return self.boardMatrix
 
     def buildBoard(self, x, y, bombs):
@@ -138,12 +140,8 @@ class GUI:
         self.label = []
         self.btn = []
 
-    def set_background(self, color):
-        self.background = color
-        self.frame.configure(background=self.background)
-
     def drawTile(self, tile, x, y):
-        t = tile.get_nearbyMines()
+        t = tile.getNearbyMines()
         tileBox = self.tk.Label(self.frame, image = self.tileImage["blank"], text=t)
         tileBox.grid(column = x, row = y)
         tileBox.bind("<Button-1>", lambda a : self.openTile(tileBox, tile))
@@ -179,10 +177,10 @@ class GUI:
         return returnData
 
     def openTile(self, tileBox, tile, explodeBomb = True, checkWin = True):
-        showImg = tile.get_nearbyMines()
-        if tile.get_open():
+        showImg = tile.getNearbyMines()
+        if tile.getOpen():
             checkWin = False
-        tile.set_open()
+        tile.setOpen()
         if showImg == 9 and explodeBomb:
             showImg = "explode"
             tileBox.config(image = self.tileImage[showImg])
@@ -191,20 +189,12 @@ class GUI:
         tileBox.config(image = self.tileImage[showImg])
         if checkWin: self.parent.checkWinOpen()
         if showImg == 0:
-            self.parent.recursiveOpen(tileBox, tile)
+            self.parent.recursiveOpen(tile)
 
     def flagTile(self, tileBox, tile):
-        try:
-            if self.rootWindow.call(tileBox.cget('image'), 'cget', '-file') == self.blankPath:
-                tileBox.config(image = self.tileImage["flag"])
-                tile.set_flagged()
-            elif self.rootWindow.call(tileBox.cget('image'), 'cget', '-file') == self.flagPath:
-                tileBox.config(image = self.tileImage["blank"])
-                tile.set_unflagged()
-            
-            self.parent.checkWinFlag()
-        except:
-            pass
+        tileImg = tile.setFlagged()
+        tileBox.config(image = self.tileImage[tileImg])
+        self.parent.checkWinFlag()
 
     def newWindow(self):
         self.rootWindow.destroy()

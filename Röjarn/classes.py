@@ -114,6 +114,7 @@ class GUI:
         self.flagPath = self.thisPath + "/img/flag.png"
         self.background = "white"
         self.rootWindow = self.tk.Tk()
+        self.rootWindow.title("Minesweeper")
         self.rootWindow.config(bg=self.background)
         self.tileImage = {
             "blank" : self.tk.PhotoImage(file = self.blankPath),
@@ -179,6 +180,8 @@ class GUI:
 
     def openTile(self, tileBox, tile, explodeBomb = True, checkWin = True):
         showImg = tile.get_nearbyMines()
+        if tile.get_open():
+            checkWin = False
         tile.set_open()
         if showImg == 9 and explodeBomb:
             showImg = "explode"
@@ -210,13 +213,13 @@ class GUI:
 
     def drawLoose(self):
         self.background = "pink"
-        self.createToplevel()
+        self.createToplevel("Exploded!")
         self.drawLabel("You Lost!", columnSpan=2)
         self.drawQuitReset()
 
     def drawWin(self, time, score):
         self.background = "lightgreen"
-        self.createToplevel()
+        self.createToplevel(title = "Congratulations!")
         self.drawLabel("You Won!", columnSpan = 4)
         time = str(time).split(".")[0]
         self.drawLabel(f"The game took you {time} seconds to finish!", columnSpan=4)
@@ -228,7 +231,7 @@ class GUI:
     
     def drawTop10(self, top10list):
         self.background = "white"
-        self.createToplevel()
+        self.createToplevel(title = "Top 10")
         self.drawLabel("Top 10", columnSpan=2)
         for i in range(len(top10list)):
             self.drawLabel("-------------------------", columnSpan=2)
@@ -244,13 +247,14 @@ class GUI:
         self.tk.Button(frame, text="Restart", command=self.parent.restart).grid(row=0, column=0, sticky="w", padx=10)
         self.tk.Button(frame, text="Quit", command=self.parent.quit).grid(row=0, column=1, sticky="e", padx=10)
 
-    def createToplevel(self):
+    def createToplevel(self, title = "Minesweeper"):
         self.toplevel = self.tk.Toplevel(self.rootWindow, background=self.background)
         self.toplevel.grab_set()
+        self.toplevel.title(title)
         self.toplevel.config(bg=self.background)
         self.frame = self.tk.Frame(self.toplevel, background=self.background, padx=20, pady=20)
         self.frame.grid(padx=20, pady=20)
-
+        
     def update(self):
         try:
             self.toplevel.mainloop()

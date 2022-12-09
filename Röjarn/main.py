@@ -45,7 +45,8 @@ class Program:
         self.gui.drawInput("Width:", 10)
         self.gui.drawInput("Height:", 10)
         self.gui.drawInput("Bombs:", 5)
-        self.gui.drawButton("Start", lambda : self.getBoardSettingsData())
+        self.gui.drawButton("Start", self.getBoardSettingsData, newLine=False)
+        self.gui.drawButton("Quit", self.quit, column=1, sticky="e")
         self.gui.update()
 
     def recursiveOpen(self, tileBox, tile):
